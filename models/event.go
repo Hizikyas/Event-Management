@@ -2,17 +2,21 @@ package models
 
 import "time"
 
-func main() {
 	type Event struct {
 		ID          int
-		Name        string
-		Description string
-		Location    string
-		DateTime    time.Time
+		Name        string   `binding:"required"`  // this makes the gin context(ShouldBindJSON) to validate the field as required 
+		Description string   `binding:"required"`
+		Location    string   `binding:"required"`
+		DateTime    time.Time   `binding:"required"`
 		UserID      int
 	}
+
+var events []Event
+
+func (e Event ) Save () {
+events = append(events , e)
 }
 
-func (e Event ) Add () {
-// add event to the database
+func GetAllEvents () []Event {
+	return  events
 }
