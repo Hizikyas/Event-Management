@@ -68,3 +68,43 @@ func GetAllEvents () ([]Event , error) {
 	}
 	return  events , nil
 }
+
+func GetEvent (id int64) (*Event , error) {
+	var event Event
+	var datetimeStr string
+	query := `SELECT * FROM events WHERE ID = ?`
+    row := db.DB.QueryRow(query , id)
+	err := row.Scan(&event.ID , &event.Name , &event.Description , &event.Location , &datetimeStr, &event.UserID)
+		
+		if err != nil {
+			return nil , err // for the return to be nil the return type must be pointer(&Event) other wise this will be the solution (Event , error) the the return Event{}, nil 
+		}
+
+	event.DateTime , err = time.Parse(time.RFC3339 , datetimeStr)
+
+	if err != nil {
+      return nil , err
+	}
+	 
+    return &event , nil
+}
+
+func (event *Event) UpdateEvent ()  error {
+ query := `UPDATE events
+ SET Name = ? , Description = ? , Location = ? , DateTime = ? , user_id = ? 
+ WHERE ID = ?`
+
+ stmt , err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+ defer stmt.Close()	
+    dateTimeStr := event.DateTime.Format(time.RFC3339)
+	_ , err = stmt.Exec(event.Name ,event.Description , event.Location , dateTimeStr ,event.UserID ,event.ID )
+		if err != nil {
+			return err
+		}
+  return nil	
+
+}
