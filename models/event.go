@@ -69,7 +69,7 @@ func GetAllEvents () ([]Event , error) {
 	return  events , nil
 }
 
-func GetEvent (id int64) (*Event , error) {
+func GetEventById (id int64) (*Event , error) {
 	var event Event
 	var datetimeStr string
 	query := `SELECT * FROM events WHERE ID = ?`
@@ -107,4 +107,19 @@ func (event *Event) UpdateEvent ()  error {
 		}
   return nil	
 
+}
+
+func (events Event) DeleteEvent () error {
+	query := `DELETE FROM events WHERE ID = ?`
+	stmt , err := db.DB.Prepare(query)
+	   if err != nil {
+		return err
+	   }
+
+	_ , err = stmt.Exec(events.ID) 
+	   if err != nil {
+			return err
+	   }
+
+  return nil
 }

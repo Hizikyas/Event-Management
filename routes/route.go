@@ -7,4 +7,5 @@ func RegisterRoute(route *gin.Engine) {
 	route.POST("/events", createEventHandler)
 	route.GET("/events/:id", getEventByIdHandler)
 	route.PUT("/events/:id" , updateEventHandler)
+	route.DELETE("/events/:id" , DeleteEvent)
 }

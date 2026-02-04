@@ -46,7 +46,7 @@ func getEventByIdHandler(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "could not parse the event id"})
 		return
 	}
-	event, err := models.GetEvent(eventId)
+	event, err := models.GetEventById(eventId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch the event."})
 		return
@@ -80,4 +80,28 @@ func getEventByIdHandler(context *gin.Context) {
    }
 
    context.JSON(http.StatusOK , gin.H{"message" : "Event Updated successfuly"})
+ }
+
+ // Delete Events by ID
+ func DeleteEvent (context *gin.Context) {
+	context.Param("id")
+	eventId , err := strconv.ParseInt(context.Param("id") , 10 , 64)
+		if err != nil {
+			context.JSON(http.StatusBadRequest , gin.H{"message" : "Could not parse the event ID"})
+			return
+		}
+	
+	events , err := models.GetEventById(eventId)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError , gin.H{"message": "Could not fetch the event"})
+			return
+		}
+        
+	err = events.DeleteEvent()	
+	if err != nil {
+		context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not delete the event"})
+		return
+	}
+    
+	context.JSON(http.StatusOK , gin.H{"message": "Events deleted successfully"})
  }
