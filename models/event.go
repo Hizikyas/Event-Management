@@ -17,7 +17,7 @@ import (
 
 
 func (e *Event ) Save ()  error {
-	query := `INSERT INTO events (name , description , location , dateTime , user_id)
+	query := `INSERT INTO events(name , description , location , dateTime , user_id)
 	VALUES (? , ? , ? , ? , ?)
 	`
 
