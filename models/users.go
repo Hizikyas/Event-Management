@@ -41,7 +41,7 @@ func (u *User) ValidateCredentials() error{
   var hashedPassword string
   err := row.Scan(&u.Id, &hashedPassword)
       if err != nil {
-		return errors.New("Invlaid credentials")
+		return errors.New("Invalid credentials")
 	  }
   
 	  isValid := utils.CheckHashedPassword(u.Password , hashedPassword)

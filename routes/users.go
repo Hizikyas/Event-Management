@@ -41,6 +41,7 @@ func login(context *gin.Context) {
 	token , err := utils.GenerateJWT(user.Id , user.Email)
 	   if err != nil {
 		context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not generate the token"})
+		return
 	   }
 
 	   

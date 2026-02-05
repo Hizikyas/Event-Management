@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"example.com/rest_api/models"
+	"example.com/rest_api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,8 +22,20 @@ func getEventHandler(context *gin.Context) {
 
 // POST Events
 func createEventHandler(context *gin.Context) {
+   token := context.Request.Header.Get("Authorization")
+      if token == "" {
+		context.JSON(http.StatusUnauthorized , gin.H{"message" : "Not Authorized"})
+		return
+	  }
+	
+	err := utils.VerifyJWT(token)
+	 if err != nil {
+		context.JSON(http.StatusUnauthorized , gin.H{"message" : "Not Authorized"})
+		return
+	 }
+     
 	event := models.Event{} // literal notation, or can be var event models.Event
-	err := context.ShouldBindJSON(&event) // this is to recieve value from the body it is like req.body 
+	err = context.ShouldBindJSON(&event) // this is to recieve value from the body it is like req.body 
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Error in binding data"})
