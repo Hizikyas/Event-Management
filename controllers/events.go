@@ -1,4 +1,4 @@
-package routes
+package controllers
 
 import (
 	"fmt"
@@ -6,12 +6,11 @@ import (
 	"strconv"
 
 	"example.com/rest_api/models"
-	"example.com/rest_api/utils"
 	"github.com/gin-gonic/gin"
 )
 
 // Get all events
-func getEventHandler(context *gin.Context) {
+func GetEventHandler(context *gin.Context) {
 	events, err := models.GetAllEvents()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Couldn't fetch the event. Try again hi"})
@@ -21,26 +20,15 @@ func getEventHandler(context *gin.Context) {
 }
 
 // POST Events
-func createEventHandler(context *gin.Context) {
-   token := context.Request.Header.Get("Authorization")
-      if token == "" {
-		context.JSON(http.StatusUnauthorized , gin.H{"message" : "Not Authorized"})
-		return
-	  }
-	
-	id , err := utils.VerifyJWT(token)
-	 if err != nil {
-		context.JSON(http.StatusUnauthorized , gin.H{"message" : "Not Authorized"})
-		return
-	 }
-     
+func CreateEventHandler(context *gin.Context) {
 	event := models.Event{} // literal notation, or can be var event models.Event
-	err = context.ShouldBindJSON(&event) // this is to recieve value from the body it is like req.body 
+	err := context.ShouldBindJSON(&event) // this is to recieve value from the body it is like req.body 
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Error in binding data"})
 		return
 	}
+	id := context.GetInt64("UserId")
 	event.UserID = id
 	err = event.Save()
 
@@ -52,7 +40,7 @@ func createEventHandler(context *gin.Context) {
 }
 
 // GET Events by ID
-func getEventByIdHandler(context *gin.Context) {
+func GetEventByIdHandler(context *gin.Context) {
 	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 
 	if err != nil {
@@ -69,7 +57,7 @@ func getEventByIdHandler(context *gin.Context) {
 }
 
 // Update Event by ID
- func updateEventHandler (context *gin.Context)  {
+ func UpdateEventHandler (context *gin.Context)  {
 
 	var updateEvents models.Event
     eventId , err := strconv.ParseInt(context.Param("id") , 10 , 64)

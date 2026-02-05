@@ -1,9 +1,10 @@
-PUT http://localhost:8080/events/2
+PUT http://localhost:8080/events/1
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QxQGdtYWlsLmNvbSIsImV4cCI6MTc3MDMyMzg5NiwidXNlcklkIjoyfQ.5LPof8IJ9fJ7UpvlAdi8ghfxHHKg38M_bSUIRcqAMdE
 
 {
     "name" : "updated" ,
     "location" : "updated location",
-    "description" : "this is a test descrption",
+    "description" : "update is a test descrption",
     "dateTime" : "2025-01-03T10:00:00Z"
 }

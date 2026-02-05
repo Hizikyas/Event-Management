@@ -1,4 +1,4 @@
-package routes
+package controllers
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func signup(context *gin.Context) {
+func Signup(context *gin.Context) {
 	var user models.User
 	err := context.ShouldBindJSON(&user)
 		if err != nil {
@@ -25,7 +25,7 @@ func signup(context *gin.Context) {
 	context.JSON(http.StatusCreated , gin.H{"message" : "User created successfully"})	
 }
 
-func login(context *gin.Context) {
+func Login(context *gin.Context) {
 	var user models.User
 	err := context.ShouldBindJSON(&user)
 	 	if err != nil {
