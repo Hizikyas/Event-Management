@@ -28,7 +28,7 @@ func createEventHandler(context *gin.Context) {
 		return
 	  }
 	
-	err := utils.VerifyJWT(token)
+	id , err := utils.VerifyJWT(token)
 	 if err != nil {
 		context.JSON(http.StatusUnauthorized , gin.H{"message" : "Not Authorized"})
 		return
@@ -41,7 +41,7 @@ func createEventHandler(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Error in binding data"})
 		return
 	}
-	event.UserID = 1
+	event.UserID = id
 	err = event.Save()
 
 	if err != nil {

@@ -19,7 +19,7 @@ func GenerateJWT(userId int64, email string) (string, error) {
 	return token.SignedString([]byte(jwtSecret)) // this will give us the signed toke string , the original token is too more complex so we use signed string , the signed string says takes any input but in reality it must be in byte form 
 }
 
-func VerifyJWT(token string) error{
+func VerifyJWT(token string) (int64 , error){
 	parseToken , err := jwt.Parse(token , func(TokenJw *jwt.Token) (interface{} , error){
 	_, ok := TokenJw.Method.(*jwt.SigningMethodHMAC) // this is to check the signing method the signing method used in generating and verifying must be same
 		if !ok {
@@ -30,24 +30,24 @@ func VerifyJWT(token string) error{
 	})
 
 	if err != nil { 
-		return errors.New("Could not parse token")
+		return 0, errors.New("Could not parse token")
 	}
 
 	tokenIsValid := parseToken.Valid  // to check if the token is valid or not
 		if !tokenIsValid {
-			return errors.New("Invalid token")
+			return 0, errors.New("Invalid token")
 		}
 
 
 	// Extracting the email and password from the token claims	
 
-		// claims , ok := parseToken.Claims.(jwt.MapClaims)	// this is type assertion to check if the claims are of type MapClaims
-		// 	if !ok {
-		// 			return errors.New("Could not extract claims")
-		// 	}
+		claims , ok := parseToken.Claims.(jwt.MapClaims)	// this is type assertion to check if the claims are of type MapClaims
+			if !ok {
+					return 0 ,errors.New("Could not extract claims")
+			}
 
-		// id, ok:= claims["userId"].(int64) // this is to extract the userId from the claims and type assertion to check if it is of type int64	
 		// email , ok := claims["email"].(string) // this is to extract the email from the claims map  and type assertion to check if it is of type string
+		id := int64(claims["userId"].(float64)) // this is to extract the userId from the claims and type assertion to check if it is of type int64	
 
-	return nil
+	return id,nil
 }

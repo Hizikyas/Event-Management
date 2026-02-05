@@ -27,10 +27,17 @@ func (u *User) Save() error {
 	 if err != nil {
 		return err
 	 }
-     _ , err = stmt.Exec(u.Email , hashedPassword)
+     result , err := stmt.Exec(u.Email , hashedPassword)
 	 	if err != nil {
 			return err
 		}
+
+	id , err := result.LastInsertId()	
+	  if err != nil {
+          return err
+	   }
+	   
+	 u.Id = id
     return nil	
 }
 
