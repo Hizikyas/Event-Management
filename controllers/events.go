@@ -123,3 +123,42 @@ func GetEventByIdHandler(context *gin.Context) {
     
 	context.JSON(http.StatusOK , gin.H{"message": "Events deleted successfully"})
  }
+
+ func RegisterEvent (context *gin.Context) {
+	userId := context.GetInt64("UserId")
+	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+		if err != nil {
+			context.JSON(http.StatusBadGateway , gin.H{"message" : "Could not parse the request"})
+		}
+	
+       event, err := models.GetEventById(eventId)
+
+	   if err != nil {
+		context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not fetch the event"})
+	   } 		
+      err = event.RegisterEvent(userId)
+	     if err != nil {
+			context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not register the event"})
+		 }
+	context.JSON(http.StatusCreated , gin.H{"message" : "Registered to the event successfully"})	 
+ }
+
+ func UnregisterEvent (context *gin.Context) {
+   	userId := context.GetInt64("UserId")
+	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
+		if err != nil {
+			context.JSON(http.StatusBadGateway , gin.H{"message" : "Could not parse the request"})
+			return
+		}
+    
+	var event models.Event
+	 event.ID = eventId
+	 err = event.UnregisterEvent(userId)	
+	 if err != nil {
+		context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not unregister the event"})
+		return
+	 }
+
+
+	context.JSON(http.StatusOK , gin.H{"message" : "Unregistered from the event successfully"})
+ }

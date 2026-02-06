@@ -8,6 +8,8 @@ import (
 var DB *sql.DB
 
 func InitDB() {
+
+
 	var err error
 	DB , err = sql.Open("sqlite" , "app.db")
 
@@ -21,6 +23,7 @@ func InitDB() {
 }
 
 func CreateTable() {
+
    createUserTable := `
    CREATE TABLE IF NOT EXISTS users (
    id INTEGER PRIMARY KEY AUTOINCREMENT , 
@@ -31,6 +34,8 @@ func CreateTable() {
   if err != nil {
 	panic("Could not create user table")
   }
+
+
 	createEventsTable := `
 	CREATE TABLE IF NOT EXISTS events (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,4 +51,17 @@ func CreateTable() {
 	if err !=nil {
 		panic("could not create event table")
 	}
+
+	createRegistrationTabel := `
+		CREATE TABLE IF NOT EXISTS registrations (
+		id INTEGER PRIMARY KEY AUTOINCREMENT ,
+		user_id INTEGER ,
+		event_id INTEGER ,
+		FOREIGN KEY(user_id) REFERENCES users(id),
+		FOREIGN KEY(event_id) REFERENCES events(id)
+		)`
+	_, err = DB.Exec(createRegistrationTabel)	
+	 if err != nil {
+		panic("Could not create regestration table")
+	 }
 }
