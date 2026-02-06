@@ -66,13 +66,25 @@ func GetEventByIdHandler(context *gin.Context) {
 		context.JSON(http.StatusBadRequest , gin.H{"message" : "Could not parse the integer"})
 		return
 	}
-  
+    
+	event, err := models.GetEventById(eventId)
+	   if err != nil {
+		context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not fetch the event"})
+	   }
+	   
    err = context.ShouldBindJSON(&updateEvents)
     if err != nil {
 		context.JSON(http.StatusBadRequest , gin.H{"message" : "Could not parse the requested data"})
 		return
 	}
-   updateEvents.ID = eventId
+
+   updateEvents.ID = event.ID
+   id := context.GetInt64("UserId")
+   if event.UserID != id {
+	context.JSON(http.StatusUnauthorized , gin.H{"message" : "Unauthorized to perform this action"})
+	 return
+   }
+
    err = updateEvents.UpdateEvent()
    if err != nil {
 	    fmt.Println(err)
@@ -97,7 +109,12 @@ func GetEventByIdHandler(context *gin.Context) {
 			context.JSON(http.StatusInternalServerError , gin.H{"message": "Could not fetch the event"})
 			return
 		}
-        
+        userId := context.GetInt64("UserId")
+		    if userId != events.UserID {
+				context.JSON(http.StatusUnauthorized , gin.H{"message" : "Unauthorized to perform this action"})
+				return
+			}
+
 	err = events.DeleteEvent()	
 	if err != nil {
 		context.JSON(http.StatusInternalServerError , gin.H{"message" : "Could not delete the event"})
